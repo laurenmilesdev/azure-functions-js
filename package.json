@@ -8,6 +8,7 @@
     "lint": "eslint . && prettier -c"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.22.5",
     "eslint": "^8.42.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
