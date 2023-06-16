@@ -18,6 +18,5 @@ module.exports = {
     'import/extensions': ['error', 'ignorePackages'],
     'class-methods-use-this': 'off',
     'no-return-await': 'off',
-    curly: ['error', 'all'],
   },
 };
