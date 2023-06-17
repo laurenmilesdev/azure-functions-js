@@ -1,4 +1,4 @@
-import Helpers from '../../helpers/helpers.js';
+import Helpers from '../../../helpers/helpers.js';
 
 describe('Helpers', () => {
   const helpers = new Helpers();
