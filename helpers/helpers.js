@@ -1,6 +1,31 @@
 import { COMPLETED_GAME_STATUS, WIN_RESULT } from '../constants/rapidapi.js';
+import MLB_TEAMS from '../constants/mlb-teams.js';
 
-export default class FormatHelper {
+export default class Helpers {
+  getCurrentDateString() {
+    const date = new Date();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) month = `0${month}`;
+    if (day < 10) day = `0${day}`;
+
+    return `${date.getFullYear()}${month}${day}`;
+  }
+
+  checkForStats(body, team) {
+    let stats;
+    const games = Object.keys(body);
+
+    games.forEach((game) => {
+      if (game.toUpperCase().includes(team.toUpperCase())) {
+        stats = body[game];
+      }
+    });
+
+    return stats;
+  }
+
   formatStats(stats) {
     const { gameStatus } = stats;
     const { home } = stats;
@@ -36,5 +61,17 @@ export default class FormatHelper {
     }
 
     return formattedStats;
+  }
+
+  getTeamNameFromAbbr(abbr) {
+    let team;
+
+    Object.keys(MLB_TEAMS).forEach((mlbTeamAbbr) => {
+      if (abbr === mlbTeamAbbr) {
+        team = MLB_TEAMS[mlbTeamAbbr];
+      }
+    });
+
+    return team;
   }
 }
