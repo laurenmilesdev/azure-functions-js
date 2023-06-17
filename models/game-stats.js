@@ -2,7 +2,7 @@ export default class GameStats {
   constructor(
     game,
     gameStatus,
-    gameTime,
+    gameTime = undefined,
     homeTeam = undefined,
     awayTeam = undefined,
     score = undefined,
