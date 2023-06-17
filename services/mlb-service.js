@@ -73,7 +73,7 @@ export default class MlbService extends ApiService {
     const formattedStats = new GameStats(
       stats.gameID,
       gameStatus,
-      stats.gameID,
+      undefined,
       home,
       away,
       { [home]: lineScore.home.R, [away]: lineScore.away.R },
