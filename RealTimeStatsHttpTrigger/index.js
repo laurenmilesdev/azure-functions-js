@@ -14,13 +14,21 @@ export default async function (context, req) {
   const helpers = new Helpers();
   const teamExists = helpers.getTeamNameFromAbbr(team);
 
-  if (team && teamExists) stats = await mlbService.getRealTimeStatsByTeam(team, date);
-  else {
+  if (team && teamExists) {
+    stats = await mlbService.getRealTimeStatsByTeam(team, date);
+
+    context.log(
+      stats.error
+        ? `There was an error fetching stats: ${stats.error}`
+        : 'Successfully fetched stats.'
+    );
+  } else {
+    const error =
+      'Missing or incorrect "team" parameter. Please pass in a team abbreviation and make sure it is correct.';
     status = 400;
-    stats = {
-      error:
-        'Missing or incorrect "team" parameter. Please pass in a team abbreviation and make sure it is correct.',
-    };
+    stats = { error };
+
+    context.log.error(error);
   }
 
   context.res = {
