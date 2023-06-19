@@ -1,0 +1,3 @@
+# GameTimeStatsHttpTrigger function
+
+## About
