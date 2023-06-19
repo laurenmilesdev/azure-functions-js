@@ -30,9 +30,9 @@ export default class MlbService extends ApiService {
 
     const response = await super.get(url, options);
     const { status } = response;
-    const { body } = response.data;
 
-    if (status && status === 200 && body) {
+    if (status && status === 200) {
+      const { body } = response.data;
       const rawStats = this.checkForStats(body, team);
       stats = this.formatStats(rawStats);
     } else {
