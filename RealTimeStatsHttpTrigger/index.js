@@ -10,7 +10,7 @@ export default async function (context, req) {
   let status = 200;
   const team = req.query.team || (req.body && req.body.team);
   const date = req.query.date || (req.body && req.body.date);
-  const mlbService = new MlbService(context, X_RAPIDAPI_KEY, X_RAPIDAPI_HOST);
+  const mlbService = new MlbService(X_RAPIDAPI_KEY, X_RAPIDAPI_HOST);
   const helpers = new Helpers();
   const teamExists = helpers.getTeamNameFromAbbr(team);
 
