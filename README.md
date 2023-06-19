@@ -4,7 +4,7 @@
 
 This project contains multiple Azure functions used to get MLB statistics. These functions are:
 
-1. **RealTimeStatsHttpTrigger** - an HTTP trigger function that returns game stats for a team in real time or past games. See the function's README for more information on how to use this function.
+1. **RealTimeStatsHttpTrigger** - an HTTP trigger function that returns game stats for a team in real time or past games. See the function's [README](GameStatsHttpTrigger/README.md) for more information on how to use this function.
 
 ## Local Development
 
@@ -24,7 +24,7 @@ Once the prerequisites are installed and working, you can now run your functions
 
 There are two ways you can execute your functions:
 
-1. If you have installed the Azure Functions VSCode extension, navigate to the Azure tab, right click on your function name, and select **Execute Function Now**. To navigate to your function, follow the path below:
+1. If you have installed the Azure Functions VSCode extension, navigate to the Azure tab, right click on your function name, and select **Execute Function Now**. Depending on the type of trigger and use of your function, you may need to specify the request body before it executes. To navigate to your function, follow the path below:
 
 ```
 Workspace > Local Project > Functions > FUNCTION_NAME
