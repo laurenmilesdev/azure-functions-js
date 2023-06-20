@@ -13,6 +13,12 @@ describe('rapidapi constants', () => {
     expect(response).toEqual('L');
   });
 
+  it('returns SCHEDULED_GAME_STATUS constant', () => {
+    const response = RapidapiConstants.SCHEDULED_GAME_STATUS;
+
+    expect(response).toEqual('scheduled');
+  });
+
   it('returns NOT_STARTED_GAME_STATUS constant', () => {
     const response = RapidapiConstants.NOT_STARTED_GAME_STATUS;
 
