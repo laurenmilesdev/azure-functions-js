@@ -1,6 +1,7 @@
 import axios from 'axios';
 import MlbService from '../../../services/mlb-service.js';
 import Helpers from '../../../helpers/helpers.js';
+import Game from '../../../models/game.js';
 import GameStats from '../../../models/game-stats.js';
 import {
   NOT_STARTED_GAME_STATUS,
@@ -15,9 +16,10 @@ describe('MlbService', () => {
   const rapidApiHost = 'host';
   const mlbService = new MlbService(rapidApiKey, rapidApiHost);
   const helpers = new Helpers();
-  const homeTeam = 'MIN';
-  const awayTeam = 'DET';
-  const game = '20230617_DET@MIN';
+  const home = 'MIN';
+  const away = 'DET';
+  const gameId = '20230617_DET@MIN';
+  const inProgressGame = new Game(gameId, IN_PROGRESS_GAME_STATUS, home, away);
   const inProgressCurrentInning = 'Bot 2';
   const inProgressAwayScoresByInning = {
     1: '1',
@@ -42,26 +44,26 @@ describe('MlbService', () => {
     9: '',
   };
   const inProgressGameStats = {
-    away: awayTeam,
-    home: homeTeam,
+    away,
+    home,
     lineScore: {
       away: {
         H: '3',
         R: '1',
-        team: awayTeam,
+        team: away,
         scoresByInning: inProgressAwayScoresByInning,
         E: '0',
       },
       home: {
         H: '2',
         R: '0',
-        team: homeTeam,
+        team: home,
         scoresByInning: inProgressHomeScoresByInning,
         E: '0',
       },
     },
     currentInning: inProgressCurrentInning,
-    gameID: game,
+    gameID: gameId,
     gameStatus: IN_PROGRESS_GAME_STATUS,
   };
 
@@ -69,7 +71,7 @@ describe('MlbService', () => {
     it('returns game stats for team if team is playing on current date', async () => {
       const axiosResponse = {
         status: 200,
-        data: { body: { [game]: inProgressGameStats } },
+        data: { body: { [gameId]: inProgressGameStats } },
       };
       const mock = axios.get.mockResolvedValueOnce(axiosResponse);
       const options = {
@@ -79,18 +81,14 @@ describe('MlbService', () => {
         headers: mlbService.headers,
       };
       const expectedResponse = new GameStats(
-        game,
-        IN_PROGRESS_GAME_STATUS,
-        undefined,
-        homeTeam,
-        awayTeam,
+        inProgressGame,
         { MIN: '0', DET: '1' },
         { MIN: '2', DET: '3' },
         inProgressCurrentInning,
         { MIN: inProgressHomeScoresByInning, DET: inProgressAwayScoresByInning },
         { MIN: '0', DET: '0' }
       );
-      const response = await mlbService.getRealTimeStatsByTeam(awayTeam);
+      const response = await mlbService.getRealTimeStatsByTeam(away);
 
       expect(mock).toHaveBeenCalledWith(`${mlbService.baseUrl}/getMLBScoresOnly`, options);
       expect(response).toEqual(expectedResponse);
@@ -115,7 +113,7 @@ describe('MlbService', () => {
       const expectedResponse = {
         error: axiosResponse.response,
       };
-      const response = await mlbService.getRealTimeStatsByTeam(awayTeam);
+      const response = await mlbService.getRealTimeStatsByTeam(away);
 
       expect(mock).toHaveBeenCalledWith(`${mlbService.baseUrl}/getMLBScoresOnly`, options);
       expect(response).toEqual(expectedResponse);
@@ -125,8 +123,8 @@ describe('MlbService', () => {
   describe('checkForStats', () => {
     it('returns game stats for team parameter passed in if game is happening on date', () => {
       const expectedResponse = { stats: 'stats' };
-      const body = { '20230616_DET@MIN': expectedResponse };
-      const response = mlbService.checkForStats(body, awayTeam);
+      const body = { [gameId]: expectedResponse };
+      const response = mlbService.checkForStats(body, away);
 
       expect(response).toEqual(expectedResponse);
     });
@@ -134,7 +132,7 @@ describe('MlbService', () => {
     it('returns undefined if team parameter passed in does not have a game on date', () => {
       const expectedResponse = { stats: 'stats' };
       const body = { '20230616_NYY@MIN': expectedResponse };
-      const response = mlbService.checkForStats(body, awayTeam);
+      const response = mlbService.checkForStats(body, away);
 
       expect(response).toEqual(undefined);
     });
@@ -144,16 +142,17 @@ describe('MlbService', () => {
     it('returns correct game stats if game has not started', () => {
       const gameTime = '2:10p';
       const notStartedGameStats = {
-        away: awayTeam,
-        home: homeTeam,
+        away,
+        home,
         teamIDAway: '10',
         teamIDHome: '17',
         gameTime,
         gameTime_epoch: '1687025400.0',
-        gameID: game,
+        gameID: gameId,
         gameStatus: NOT_STARTED_GAME_STATUS,
       };
-      const expectedResponse = new GameStats(game, NOT_STARTED_GAME_STATUS, gameTime);
+      const game = new Game(gameId, NOT_STARTED_GAME_STATUS, home, away, gameTime);
+      const expectedResponse = new GameStats(game);
       const response = mlbService.formatStats(notStartedGameStats);
 
       expect(response).toEqual(expectedResponse);
@@ -161,11 +160,7 @@ describe('MlbService', () => {
 
     it('returns correct game stats if game is in progress', () => {
       const expectedResponse = new GameStats(
-        game,
-        IN_PROGRESS_GAME_STATUS,
-        undefined,
-        homeTeam,
-        awayTeam,
+        inProgressGame,
         { MIN: '0', DET: '1' },
         { MIN: '2', DET: '3' },
         inProgressCurrentInning,
@@ -202,41 +197,38 @@ describe('MlbService', () => {
         9: '0',
       };
       const completedGameStats = {
-        away: awayTeam,
-        home: homeTeam,
+        away,
+        home,
         lineScore: {
           away: {
             H: '10',
             R: '6',
-            team: awayTeam,
+            team: away,
             scoresByInning: completedAwayScoresByInning,
             E: '0',
           },
           home: {
             H: '5',
             R: '3',
-            team: homeTeam,
+            team: home,
             scoresByInning: completedHomeScoresByInning,
             E: '1',
           },
         },
         currentInning: completedCurrentInning,
-        gameID: game,
+        gameID: gameId,
         gameStatus: COMPLETED_GAME_STATUS,
       };
+      const game = new Game(gameId, COMPLETED_GAME_STATUS, home, away);
       const expectedResponse = new GameStats(
         game,
-        COMPLETED_GAME_STATUS,
-        undefined,
-        homeTeam,
-        awayTeam,
         { MIN: '3', DET: '6' },
         { MIN: '5', DET: '10' },
         completedCurrentInning,
         { MIN: completedHomeScoresByInning, DET: completedAwayScoresByInning },
         { MIN: '1', DET: '0' },
-        awayTeam,
-        homeTeam
+        away,
+        home
       );
       const response = mlbService.formatStats(completedGameStats);
 
