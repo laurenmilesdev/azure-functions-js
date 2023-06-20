@@ -82,11 +82,11 @@ describe('MlbService', () => {
       };
       const expectedResponse = new GameStats(
         inProgressGame,
-        { MIN: '0', DET: '1' },
-        { MIN: '2', DET: '3' },
+        { [home]: '0', [away]: '1' },
+        { [home]: '2', [away]: '3' },
         inProgressCurrentInning,
-        { MIN: inProgressHomeScoresByInning, DET: inProgressAwayScoresByInning },
-        { MIN: '0', DET: '0' }
+        { [home]: inProgressHomeScoresByInning, DET: inProgressAwayScoresByInning },
+        { [home]: '0', [away]: '0' }
       );
       const response = await mlbService.getRealTimeStatsByTeam(away);
 
@@ -161,11 +161,11 @@ describe('MlbService', () => {
     it('returns correct game stats if game is in progress', () => {
       const expectedResponse = new GameStats(
         inProgressGame,
-        { MIN: '0', DET: '1' },
-        { MIN: '2', DET: '3' },
+        { [home]: '0', [away]: '1' },
+        { [home]: '2', [away]: '3' },
         inProgressCurrentInning,
-        { MIN: inProgressHomeScoresByInning, DET: inProgressAwayScoresByInning },
-        { MIN: '0', DET: '0' }
+        { [home]: inProgressHomeScoresByInning, DET: inProgressAwayScoresByInning },
+        { [home]: '0', [away]: '0' }
       );
       const response = mlbService.formatStats(inProgressGameStats);
 
@@ -222,11 +222,11 @@ describe('MlbService', () => {
       const game = new Game(gameId, COMPLETED_GAME_STATUS, home, away);
       const expectedResponse = new GameStats(
         game,
-        { MIN: '3', DET: '6' },
-        { MIN: '5', DET: '10' },
+        { [home]: '3', [away]: '6' },
+        { [home]: '5', [away]: '10' },
         completedCurrentInning,
-        { MIN: completedHomeScoresByInning, DET: completedAwayScoresByInning },
-        { MIN: '1', DET: '0' },
+        { [home]: completedHomeScoresByInning, DET: completedAwayScoresByInning },
+        { [home]: '1', [away]: '0' },
         away,
         home
       );
