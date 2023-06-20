@@ -4,7 +4,7 @@ import Helpers from '../helpers/helpers.js';
 
 // eslint-disable-next-line func-names
 export default async function (context, req) {
-  context.log('MlbRealTimeStatsHttpTrigger function processed a request.');
+  context.log('GameStatsHttpTrigger function processed a request.');
 
   let stats = {};
   let status = 200;
