@@ -21,7 +21,6 @@ export default class MlbService extends ApiService {
     this.helpers = new Helpers();
   }
 
-  // add check for past games
   async getTeamSchedule(team, year = undefined) {
     let schedule;
     const currentYear = new Date().getFullYear().toString();
@@ -76,6 +75,31 @@ export default class MlbService extends ApiService {
     }
 
     return stats;
+  }
+
+  async getPlayerInformation(playerId = undefined) {
+    let playerInformation;
+    const url = `${this.baseUrl}/getMLBPlayerInfo`;
+    const options = {
+      params: { playerID: playerId },
+      headers: this.headers,
+    };
+    const response = await super.get(url, options);
+    const { status } = response;
+
+    if (status && status === 200) {
+      // const { error } = response.data;
+      const { body } = response.data;
+
+      playerInformation = body;
+    } else {
+      const errorResponse = response.response;
+      playerInformation = {
+        error: new Error(errorResponse.status, errorResponse.statusText, errorResponse.data),
+      };
+    }
+
+    return playerInformation;
   }
 
   checkForStats(body, team) {
