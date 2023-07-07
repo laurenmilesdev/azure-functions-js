@@ -21,14 +21,14 @@ export default class MlbService extends ApiService {
     this.helpers = new Helpers();
   }
 
-  async getTeamSchedule(team, year = undefined) {
+  async getTeamSchedule(team, season = undefined) {
     let schedule;
-    const currentYear = new Date().getFullYear().toString();
+    const currentSeason = new Date().getFullYear().toString();
     const url = `${this.baseUrl}/getMLBTeamSchedule`;
     const options = {
       params: {
         teamAbv: team,
-        season: year || currentYear,
+        season: season || currentSeason,
       },
       headers: this.headers,
     };
@@ -122,7 +122,8 @@ export default class MlbService extends ApiService {
         scheduledGame.gameID,
         scheduledGame.gameStatus,
         scheduledGame.home,
-        scheduledGame.away
+        scheduledGame.away,
+        scheduledGame.gameTime
       );
 
       // Maxes out free API call limit

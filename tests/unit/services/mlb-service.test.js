@@ -3,10 +3,12 @@ import MlbService from '../../../services/mlb-service.js';
 import Helpers from '../../../helpers/helpers.js';
 import Game from '../../../models/game.js';
 import GameStats from '../../../models/game-stats.js';
+import GameSchedule from '../../../models/game-schedule.js';
 import {
   NOT_STARTED_GAME_STATUS,
   IN_PROGRESS_GAME_STATUS,
   COMPLETED_GAME_STATUS,
+  SCHEDULED_GAME_STATUS,
 } from '../../../constants/rapidapi.js';
 
 jest.mock('axios');
@@ -66,6 +68,53 @@ describe('MlbService', () => {
     gameID: gameId,
     gameStatus: IN_PROGRESS_GAME_STATUS,
   };
+
+  describe('getTeamSchedule', () => {
+    it('returns team schedule for current year if year is not passed in', async () => {
+      const gameTime = '8:10p';
+      const gameType = 'REGULAR_SEASON';
+      const gameDate = '20230617';
+      const probableStartingPitchers = { away: '', home: '' };
+      const axiosResponse = {
+        status: 200,
+        data: {
+          body: {
+            team: away,
+            schedule: [
+              {
+                gameID: gameId,
+                gameType,
+                away,
+                gameTime,
+                teamIDHome: '6',
+                gameDate,
+                gameStatus: SCHEDULED_GAME_STATUS,
+                teamIDAway: '4',
+                probableStartingPitchers,
+                home,
+              },
+            ],
+          },
+        },
+      };
+      const game = new Game(gameId, SCHEDULED_GAME_STATUS, home, away, gameTime);
+      const mock = axios.get.mockResolvedValueOnce(axiosResponse);
+      const options = {
+        params: {
+          teamAbv: away,
+          season: new Date().getFullYear().toString(),
+        },
+        headers: mlbService.headers,
+      };
+      const expectedResponse = [
+        new GameSchedule(game, gameType, gameDate, probableStartingPitchers),
+      ];
+      const response = await mlbService.getTeamSchedule(away);
+
+      expect(mock).toHaveBeenCalledWith(`${mlbService.baseUrl}/getMLBTeamSchedule`, options);
+      expect(response).toEqual(expectedResponse);
+    });
+  });
 
   describe('getRealTimeStatsByTeam', () => {
     it('returns game stats for team if team is playing on current date', async () => {
