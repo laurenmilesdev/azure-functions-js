@@ -9,12 +9,13 @@ export default async function (context, req) {
   let schedule = {};
   let status = 200;
   const team = req.query.team || (req.body && req.body.team);
+  const year = req.query.year || (req.body && req.body.year);
   const mlbService = new MlbService(X_RAPIDAPI_KEY, X_RAPIDAPI_HOST);
   const helpers = new Helpers();
   const teamExists = helpers.getTeamNameFromAbbr(team);
 
   if (team && teamExists) {
-    schedule = await mlbService.getTeamSchedule(team);
+    schedule = await mlbService.getTeamSchedule(team, year);
 
     context.log(
       schedule.error
