@@ -1,10 +1,6 @@
 export default class GameStats {
   constructor(
     game,
-    gameStatus,
-    gameTime = undefined,
-    homeTeam = undefined,
-    awayTeam = undefined,
     score = undefined,
     hits = undefined,
     currentInning = undefined,
@@ -14,10 +10,6 @@ export default class GameStats {
     losingTeam = undefined
   ) {
     this.game = game;
-    this.gameStatus = gameStatus;
-    this.gameTime = gameTime;
-    this.homeTeam = homeTeam;
-    this.awayTeam = awayTeam;
     this.score = score;
     this.hits = hits;
     this.currentInning = currentInning;

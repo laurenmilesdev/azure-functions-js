@@ -4,35 +4,35 @@ import Helpers from '../helpers/helpers.js';
 
 // eslint-disable-next-line func-names
 export default async function (context, req) {
-  context.log('GameStatsHttpTrigger function processed a request.');
+  context.log('TeamScheduleHttpTrigger function processed a request.');
 
-  let stats = {};
+  let schedule = {};
   let status = 200;
   const team = req.query.team || (req.body && req.body.team);
-  const date = req.query.date || (req.body && req.body.date);
+  const season = req.query.season || (req.body && req.body.season);
   const mlbService = new MlbService(X_RAPIDAPI_KEY, X_RAPIDAPI_HOST);
   const helpers = new Helpers();
   const teamExists = helpers.getTeamNameFromAbbr(team);
 
   if (team && teamExists) {
-    stats = await mlbService.getRealTimeStatsByTeam(team, date);
+    schedule = await mlbService.getTeamSchedule(team, season);
 
     context.log(
-      stats.error
-        ? `There was an error fetching stats: ${stats.error}`
-        : 'Successfully fetched stats.'
+      schedule.error
+        ? `There was an error fetching schedule: ${schedule.error}`
+        : 'Successfully fetched schedule.'
     );
   } else {
     const error =
       'Missing or incorrect "team" parameter. Please pass in a team abbreviation and make sure it is correct.';
     status = 400;
-    stats = { error };
+    schedule = { error };
 
     context.log.error(error);
   }
 
   context.res = {
     status,
-    body: stats,
+    body: schedule,
   };
 }
