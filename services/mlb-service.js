@@ -40,7 +40,7 @@ export default class MlbService extends ApiService {
       const { body } = response.data;
 
       if (error) schedule = { error: new Error(status, response.statusText, error) };
-      else schedule = this.formatSchedule(body.schedule);
+      else schedule = await this.formatSchedule(body.schedule);
     } else {
       const errorResponse = response.response;
       schedule = {
@@ -88,7 +88,6 @@ export default class MlbService extends ApiService {
     const { status } = response;
 
     if (status && status === 200) {
-      // const { error } = response.data;
       const { body } = response.data;
 
       playerInformation = body;
@@ -114,22 +113,37 @@ export default class MlbService extends ApiService {
     return stats;
   }
 
-  formatSchedule(scheduledGames) {
+  async formatSchedule(scheduledGames) {
     const schedule = [];
 
-    // eslint-disable-next-line array-callback-return
-    scheduledGames.forEach((scheduledGame) => {
-      const { gameStatus } = scheduledGame;
-      const { home } = scheduledGame;
-      const { away } = scheduledGame;
-      const game = new Game(scheduledGame.gameID, gameStatus, home, away);
+    scheduledGames.map(async (scheduledGame) => {
+      const { probableStartingPitchers } = scheduledGame;
+      const game = new Game(
+        scheduledGame.gameID,
+        scheduledGame.gameStatus,
+        scheduledGame.home,
+        scheduledGame.away
+      );
+
+      // Maxes out free API call limit
+      // if (probableStartingPitchers && probableStartingPitchers.away !== '') {
+      //   const awayStartingPitcher = await this.getPlayerInformation(probableStartingPitchers.away);
+
+      //   if (awayStartingPitcher) probableStartingPitchers.away = awayStartingPitcher.longName;
+      // }
+
+      // if (probableStartingPitchers && probableStartingPitchers.home !== '') {
+      //   const homeStartingPitcher = await this.getPlayerInformation(probableStartingPitchers.home);
+
+      //   if (homeStartingPitcher) probableStartingPitchers.home = homeStartingPitcher.longName;
+      // }
 
       schedule.push(
         new GameSchedule(
           game,
           scheduledGame.gameType,
           scheduledGame.gameDate,
-          scheduledGame.probableStartingPitchers
+          probableStartingPitchers
         )
       );
     });
