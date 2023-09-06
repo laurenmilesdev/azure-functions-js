@@ -5,6 +5,7 @@
 This project contains multiple Azure functions used to get MLB statistics. These functions are:
 
 1. **RealTimeStatsHttpTrigger** - an HTTP trigger function that returns game stats for a team in real time or past games. See the function's [README](GameStatsHttpTrigger/README.md) for more information on how to use this function.
+2. **TeamScheduleHttpTrigger** - an HTTP trigger function that returns games schedule for a team based on the season. See the function's [README](TeamScheduleHttpTrigger/README.md) for more information on how to use this function.
 
 ## Local Development
 
